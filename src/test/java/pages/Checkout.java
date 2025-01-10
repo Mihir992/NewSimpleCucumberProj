@@ -12,7 +12,10 @@ import java.time.Duration;
 
 public class Checkout {
     @FindBy(css = "[placeholder='Select Country']")
-    WebElement country;
+    WebElement countryInput;
+
+    @FindBy(xpath = "//button[contains(@class, 'ng-star-inserted')]")
+    WebElement countrySuggestions;
 
     @FindBy(xpath = "//a[@class='btnn action__submit ng-star-inserted']")
     WebElement placeOrderBtn;
@@ -20,8 +23,8 @@ public class Checkout {
     //@FindBy(xpath="//button[contains(@class,'ta-item')])[2]")
     //WebElement selectCountry;
 
-    @FindBy(xpath = "//button[@type='button'][2]")
-    WebElement selectItems;
+    //@FindBy(xpath = "//button[contains(@class, 'ng-star-inserted') and contains(text(), 'India')]")
+    //WebElement selectItems;
 
     By results = By.cssSelector(".ta-results");
 
@@ -35,17 +38,25 @@ public class Checkout {
 
     public void waitForElementToAppear(By Findby)
     {
-        WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(30));
+        WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(20));
         wait.until(ExpectedConditions.visibilityOfElementLocated(Findby));
     }
 
     public void setSelectCountry(String countryName) {
         // Wait for the country input field to be visible
-        wait.until(ExpectedConditions.visibilityOf(country));
-        country.sendKeys(countryName);
+        WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(20));
+        wait.until(ExpectedConditions.visibilityOf(countryInput));
+        countryInput.sendKeys(countryName);
         // Wait for the autosuggestion results to appear
-        waitForElementToAppear(results);
-        selectItems.click();
+       // waitForElementToAppear(results);
+        // Wait for the autosuggestion results to appear
+        wait.until(ExpectedConditions.visibilityOf(countrySuggestions));
+
+        // Construct the dynamic XPath for the specific country suggestion
+        WebElement countryButton = driver.findElement(By.xpath("//button[contains(@class, 'ng-star-inserted') and contains(text(), '" + countryName + "')]"));
+
+        // Select the country from the suggestions list
+        countryButton.click();
     }
     
     public boolean clickPlaceOrder() {
