@@ -23,14 +23,17 @@ public class Setup {
         return driver;
     }
 
-    public static WebDriver getDriver() {
-        return driver;
-    }
-
+    // This will run after each scenario to quit the WebDriver
+    @After
     public static void quitDriver() {
         if (driver != null) {
             driver.quit();
-            driver = null;
+            driver = null; // Set to null after quitting the driver
         }
+    }
+
+    // Getter for the WebDriver instance
+    public static WebDriver getDriver() {
+        return driver;
     }
 }
