@@ -3,6 +3,7 @@ package StepDefinitions;
 import Setup.Setup;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -20,14 +21,13 @@ public class PlaceOrderStepDefinitions{
     ConfirmOrderPage confirmOrder;
 
     public WebDriver driver;
-
-    // Cucumber @Before hook to initialize WebDriver
     @Before
     public void setUp() {
-        driver = new Setup().initializeDriver();  // assuming Setup class has a method to initialize the driver
+        // Initialize the driver only once
+        driver = Setup.initializeDriver();
     }
 
-    @Given("User go to the Home page for test 2")
+    @Given("User go to the Home page")
     public void user_visited_the_portal() {
         landingPage = new LandingPage(driver);
         landingPage.gotoLandingPage();
@@ -78,9 +78,8 @@ public class PlaceOrderStepDefinitions{
         );
     }*/
 
-    // Step definition for selecting a country
     @And("User selects {string} as the country")
-    public void user_selects_country(String country) {
+    public void user_selects_country(String country) throws InterruptedException {
         checkoutPage = new Checkout(driver);
         checkoutPage.setSelectCountry(country);
     }
@@ -91,17 +90,16 @@ public class PlaceOrderStepDefinitions{
         checkoutPage.clickPlaceOrder();
     }
 
-    @Then("Verify that the order place message \" Thankyou for the order. \" is displayed")
-    public void verify_that_the_order_has_been_successfully_processed() {
-        confirmOrder = new ConfirmOrderPage(driver);
-        confirmOrder.verifyConfirmationMessage();
+    @Then("Verify that the order place {string} is displayed")
+    public void verify_that_the_order_place_message_is_displayed(String msg) throws PendingException {
+        confirmOrder = new ConfirmOrderPage(driver);  // Initialize the page object for confirmation
+        confirmOrder.verifyConfirmationMessage(msg);
+        //throw new io.cucumber.java.PendingException();// Verify the message is correct
     }
-    // This is a @After hook in Cucumber, which runs after each scenario
+
     @After
     public void tearDown() {
-        // Quit the browser after the scenario
-        if (driver != null) {
-            driver.quit();
-        }
+        // Quit the browser once all scenarios are finished
+        Setup.quitDriver();
     }
 }
