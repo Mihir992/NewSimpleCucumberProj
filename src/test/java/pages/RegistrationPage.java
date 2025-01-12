@@ -14,12 +14,6 @@ public class RegistrationPage {
     WebElement firstNameTextField;
     @FindBy(id = "lastName")
     WebElement lastNameTextField;
-    //@FindBy(name = "DateOfBirthDay")
-    //WebElement dayOfBirthSelect;
-    //@FindBy(name = "DateOfBirthMonth")
-    //WebElement monthOfBirthSelect;
-    //@FindBy(name = "DateOfBirthYear")
-    //WebElement yearOfBirthSelect;
     @FindBy(id = "userEmail")
     WebElement emailTextField;
     @FindBy(id = "userMobile")
@@ -32,7 +26,7 @@ public class RegistrationPage {
     WebElement checkboxField;
     @FindBy(id = "login")
     WebElement registerButton;
-    @FindBy(xpath = "//div[@class='invalid-feedback ng-star-inserted']")
+    @FindBy(xpath = "//div[contains(text(),'*Email is required')]")
     WebElement errorMessage;
     @FindBy(xpath = "//h1[contains(text(),'Account Created Successfully')]")
     WebElement successMessage;
@@ -153,18 +147,25 @@ public class RegistrationPage {
     public String getErrorMessage() {
         try {
             wait.until(ExpectedConditions.visibilityOf(errorMessage));
-            return errorMessage.getText(); // Return the error message text
+            // Fetch and log the actual error message
+            String errorMsg = errorMessage.getText().trim();
+            System.out.println("Error Message: " + errorMsg);  // Log for debugging
+            return errorMsg;
         } catch (Exception ex) {
             return ""; // Return an empty string if no error message is found
         }
     }
 
-    // Method to fetch the actual error message
+    // Method to fetch the actual success message
     public String getSuccessMessage() {
         try {
             wait.until(ExpectedConditions.visibilityOf(successMessage));
-            return successMessage.getText(); // Return the success message text
-        } catch (Exception ex) {
+            // Fetch and log the actual success message
+            String actualSuccessMessage = successMessage.getText().trim();
+            System.out.println("Actual Success Message: " + actualSuccessMessage);  // Log for debugging
+            // Return the success message text
+            return actualSuccessMessage;
+            } catch (Exception ex) {
             return ""; // Return an empty string if no error message is found
         }
     }
